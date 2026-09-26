@@ -1,5 +1,6 @@
 import { useMutation } from '@tanstack/react-query'
 
+import { disableGoogleAutoSelect } from '@/lib/google-identity'
 import { http } from '@/lib/http'
 import { useSession } from '@/stores/session'
 import type { AuthResponse, RegisterRequest, RegisterResponse } from '@/types/api'
@@ -16,11 +17,23 @@ export function useLogin() {
   })
 }
 
+export function useGoogleLogin() {
+  const setSession = useSession((s) => s.setSession)
+  return useMutation({
+    mutationFn: (idToken: string) =>
+      http<AuthResponse>('/auth/google', { method: 'POST', body: { idToken }, anonymous: true }),
+    onSuccess: setSession,
+  })
+}
+
 export function useLogout() {
   const clearSession = useSession((s) => s.clearSession)
   return useMutation({
     mutationFn: () => http<void>('/auth/logout', { method: 'POST' }),
-    onSettled: clearSession,
+    onSettled: () => {
+      disableGoogleAutoSelect()
+      clearSession()
+    },
   })
 }
 

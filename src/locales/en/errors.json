@@ -9,6 +9,7 @@
   "OTP_LOCKED": "Too many incorrect codes. Verification is locked for 15 minutes.",
   "GOOGLE_TOKEN_INVALID": "Could not verify your Google account. Please try again.",
   "ACCOUNT_LINK_REQUIRED": "This email is registered with a password. Sign in with your password first to link Google.",
+  "GOOGLE_UNAVAILABLE": "Could not load Google sign-in. Check your connection or ad blocker and try again.",
   "NETWORK_ERROR": "Cannot reach the server. Check your connection and try again.",
   "INTERNAL_ERROR": "Something went wrong. Please try again."
 }

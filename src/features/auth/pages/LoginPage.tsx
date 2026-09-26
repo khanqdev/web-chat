@@ -1,4 +1,5 @@
 ﻿import { zodResolver } from '@hookform/resolvers/zod'
+import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router'
@@ -8,8 +9,9 @@ import { errorMessage } from '@/lib/errors'
 
 import { useLogin } from '../api'
 import { AuthLayout, BrandMark } from '../components/AuthLayout'
-import { AuthTitle, FormAlert, FormField, GoogleButton, OrDivider, SubmitButton } from '../components/FormParts'
+import { AuthTitle, FormAlert, FormField, OrDivider, SubmitButton } from '../components/FormParts'
 import { fieldAria, fieldClass } from '../components/form-utils'
+import { GoogleSignInButton } from '../components/GoogleSignInButton'
 import { PasswordInput } from '../components/PasswordInput'
 import { loginSchema, type LoginInput } from '../schema'
 import { useGoogleSignIn } from '../use-google-sign-in'
@@ -20,11 +22,21 @@ export function LoginPage() {
   const [searchParams] = useSearchParams()
   const location = useLocation()
   const login = useLogin()
-  const google = useGoogleSignIn()
+
+  const goToTarget = () => {
+    // Chỉ nhận đường dẫn nội bộ để tránh open redirect
+    const from = searchParams.get('from')
+    const target = from?.startsWith('/') && !from.startsWith('//') ? from : '/'
+    void navigate(target, { replace: true })
+  }
+
+  const google = useGoogleSignIn(goToTarget)
 
   const {
     register,
     handleSubmit,
+    setValue,
+    setFocus,
     formState: { errors },
   } = useForm<LoginInput>({
     resolver: zodResolver(loginSchema),
@@ -34,19 +46,20 @@ export function LoginPage() {
 
   const onSubmit = handleSubmit((values) => {
     google.reset()
-    login.mutate(values, {
-      onSuccess: () => {
-        // Chỉ nhận đường dẫn nội bộ để tránh open redirect
-        const from = searchParams.get('from')
-        const target = from?.startsWith('/') && !from.startsWith('//') ? from : '/'
-        void navigate(target, { replace: true })
-      },
-    })
+    login.mutate(values, { onSuccess: goToTarget })
   })
 
-  const onGoogle = () => {
+  // Email Google đã có tài khoản mật khẩu: điền sẵn email, đưa con trỏ vào ô mật khẩu
+  const { linkEmail } = google
+  useEffect(() => {
+    if (!linkEmail) return
+    setValue('email', linkEmail)
+    setFocus('password')
+  }, [linkEmail, setValue, setFocus])
+
+  const onGoogleCredential = (idToken: string) => {
     login.reset()
-    google.start()
+    google.signIn(idToken)
   }
 
   const formError = login.isError ? errorMessage(login.error) : google.error
@@ -56,7 +69,12 @@ export function LoginPage() {
       <BrandMark />
       <AuthTitle>{t('login.title')}</AuthTitle>
 
-      <GoogleButton onClick={onGoogle} />
+      <GoogleSignInButton
+        context="signin"
+        pending={google.pending}
+        onCredential={onGoogleCredential}
+        onUnavailable={google.onUnavailable}
+      />
       <OrDivider />
 
       <form noValidate onSubmit={onSubmit} className="flex flex-col gap-3.5">

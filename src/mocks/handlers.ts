@@ -2,6 +2,8 @@ import { delay, http, HttpResponse } from 'msw'
 
 import type { AuthResponse, Me, RegisterRequest, RegisterResponse } from '@/types/api'
 
+import { decodeJwtPayload } from '@/lib/jwt'
+
 import { DEMO_ACCOUNT, demoUser, makeUser, MOCK_OTP } from './data'
 
 const BASE = import.meta.env.VITE_API_BASE_URL ?? '/api/v1'
@@ -16,7 +18,8 @@ const OTP_MAX_FAILED = 5
 const RESEND_GAP_MS = 60 * SEC
 const RESEND_MAX_PER_HOUR = 5
 
-type Account = { password: string; user: Me }
+// password = null: tài khoản chỉ đăng nhập bằng Google
+type Account = { password: string | null; user: Me }
 type PendingSignup = {
   request: RegisterRequest
   otpExpiresAt: number
@@ -149,6 +152,33 @@ export const handlers = [
   }),
 
   // Mock không giữ cookie refresh: tải lại trang sẽ quay về /login
+  // Mock không kiểm chữ ký với Google: chỉ đọc payload của ID token thật mà GIS trả về
+  http.post(`${BASE}/auth/google`, async ({ request }) => {
+    await delay(600)
+    const { idToken } = (await request.json()) as { idToken?: string }
+    const claims = idToken
+      ? decodeJwtPayload<{ email?: string; email_verified?: boolean; name?: string; picture?: string; exp?: number }>(idToken)
+      : null
+    if (!claims?.email || !claims.email_verified || (claims.exp ?? 0) * SEC < Date.now()) {
+      return error(401, 'GOOGLE_TOKEN_INVALID')
+    }
+
+    const email = claims.email.toLowerCase()
+    const existing = accounts.get(email)
+    if (existing) {
+      if (!existing.user.authProviders.includes('google')) return error(409, 'ACCOUNT_LINK_REQUIRED')
+      return HttpResponse.json(authResponse(existing.user))
+    }
+
+    const user: Me = {
+      ...makeUser(crypto.randomUUID().replaceAll('-', '').slice(0, 24), email, claims.name ?? email.split('@')[0]),
+      avatarUrl: claims.picture ?? null,
+      authProviders: ['google'],
+    }
+    accounts.set(email, { password: null, user })
+    return HttpResponse.json({ ...authResponse(user), isNewUser: true })
+  }),
+
   http.post(`${BASE}/auth/refresh`, () => error(401, 'TOKEN_EXPIRED')),
 
   http.post(`${BASE}/auth/logout`, () => new HttpResponse(null, { status: 204 })),

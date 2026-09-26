@@ -9,8 +9,9 @@ import { ApiError } from '@/lib/http'
 
 import { useRegister } from '../api'
 import { AuthLayout, BrandMark } from '../components/AuthLayout'
-import { AuthTitle, FormAlert, FormField, GoogleButton, OrDivider, SubmitButton } from '../components/FormParts'
+import { AuthTitle, FormAlert, FormField, OrDivider, SubmitButton } from '../components/FormParts'
 import { fieldAria, fieldClass } from '../components/form-utils'
+import { GoogleSignInButton } from '../components/GoogleSignInButton'
 import { PasswordInput } from '../components/PasswordInput'
 import { usePendingRegistration } from '../pending-registration'
 import { registerSchema, type RegisterInput } from '../schema'
@@ -27,7 +28,7 @@ export function RegisterPage() {
   const { t, i18n } = useTranslation('auth')
   const navigate = useNavigate()
   const registerMutation = useRegister()
-  const google = useGoogleSignIn()
+  const google = useGoogleSignIn(() => void navigate('/', { replace: true }))
   const pendingEmail = usePendingRegistration((s) => s.pending?.email)
 
   const {
@@ -59,9 +60,9 @@ export function RegisterPage() {
     )
   })
 
-  const onGoogle = () => {
+  const onGoogleCredential = (idToken: string) => {
     registerMutation.reset()
-    google.start()
+    google.signIn(idToken)
   }
 
   const apiError = registerMutation.error
@@ -75,7 +76,12 @@ export function RegisterPage() {
       <AuthTitle>{t('register.title')}</AuthTitle>
       <p className="-mt-1.5 text-sm text-muted-foreground">{t('register.subtitle')}</p>
 
-      <GoogleButton onClick={onGoogle} />
+      <GoogleSignInButton
+        context="signup"
+        pending={google.pending}
+        onCredential={onGoogleCredential}
+        onUnavailable={google.onUnavailable}
+      />
       <OrDivider />
 
       <form noValidate onSubmit={onSubmit} className="flex flex-col gap-3.5">
@@ -136,6 +142,17 @@ export function RegisterPage() {
             ) : (
               errorMessage(apiError)
             )
+          ) : google.linkRequired ? (
+            <>
+              {google.error}{' '}
+              <Link
+                to="/login"
+                state={{ email: google.linkEmail }}
+                className="font-semibold underline underline-offset-2"
+              >
+                {t('register.signInToLink')}
+              </Link>
+            </>
           ) : (
             google.error
           )}

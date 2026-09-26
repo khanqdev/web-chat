@@ -5,8 +5,6 @@ import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 
-import { fieldClass } from './form-utils'
-import { GoogleIcon } from './GoogleIcon'
 
 export function AuthTitle({ children }: { children: ReactNode }) {
   return <h1 className="mt-2 text-[26px] leading-tight font-bold tracking-[-0.01em]">{children}</h1>
@@ -43,16 +41,6 @@ export function FormAlert({ children }: { children?: ReactNode }) {
         <div className="rounded-[14px] bg-danger-soft px-3.5 py-2.5 text-[13px] text-danger">{children}</div>
       )}
     </div>
-  )
-}
-
-export function GoogleButton({ onClick }: { onClick: () => void }) {
-  const { t } = useTranslation('auth')
-  return (
-    <Button type="button" variant="outline" className={`${fieldClass} gap-2.5`} onClick={onClick}>
-      <GoogleIcon className="size-[18px]" />
-      {t('login.google')}
-    </Button>
   )
 }
 
