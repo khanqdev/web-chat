@@ -22,4 +22,17 @@ export const registerSchema = z
 
 export type RegisterInput = z.infer<typeof registerSchema>
 
+export const forgotPasswordSchema = z.object({ email })
+
+export type ForgotPasswordInput = z.infer<typeof forgotPasswordSchema>
+
+export const resetPasswordSchema = z
+  .object({ newPassword: password, confirmPassword: z.string() })
+  .refine((v) => v.newPassword === v.confirmPassword, {
+    message: 'validation.passwordMismatch',
+    path: ['confirmPassword'],
+  })
+
+export type ResetPasswordInput = z.infer<typeof resetPasswordSchema>
+
 export const OTP_LENGTH = 6

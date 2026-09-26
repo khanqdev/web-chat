@@ -1,5 +1,6 @@
 import { delay, http, HttpResponse } from 'msw'
 
+import { decodeIdToken } from '@/lib/google-identity'
 import type { AuthResponse, Me, RegisterRequest, RegisterResponse } from '@/types/api'
 
 import { DEMO_ACCOUNT, demoUser, makeUser, MOCK_OTP } from './data'
@@ -28,6 +29,7 @@ type PendingSignup = {
 // Trạng thái nằm trong bộ nhớ của service worker client: tải lại trang là mất
 const accounts = new Map<string, Account>([[DEMO_ACCOUNT.email, { password: DEMO_ACCOUNT.password, user: demoUser }]])
 const pendingSignups = new Map<string, PendingSignup>()
+const passwordResets = new Map<string, Omit<PendingSignup, 'request'>>()
 let loginFailed = 0
 let loginLockedUntil = 0
 
@@ -146,6 +148,90 @@ export const handlers = [
     accounts.set(email, { password: req.password, user })
     pendingSignups.delete(email)
     return HttpResponse.json({ ...authResponse(user), isNewUser: true }, { status: 201 })
+  }),
+
+  // Luôn 202 kể cả email không tồn tại (tránh dò email); chỉ tài khoản có thật mới nhận mã
+  http.post(`${BASE}/auth/password/forgot`, async ({ request }) => {
+    await delay(600)
+    const { email: raw } = (await request.json()) as { email: string }
+    const email = raw.trim().toLowerCase()
+    const now = Date.now()
+
+    const entry = passwordResets.get(email) ?? { otpExpiresAt: 0, failed: 0, lockedUntil: 0, sentAt: [] }
+    const recent = entry.sentAt.filter((t) => now - t < 60 * MIN)
+    const last = recent.at(-1) ?? 0
+    if (now - last < RESEND_GAP_MS) {
+      return error(429, 'RATE_LIMITED', { retryAfterSec: Math.ceil((RESEND_GAP_MS - (now - last)) / SEC) })
+    }
+    if (recent.length >= RESEND_MAX_PER_HOUR) {
+      return error(429, 'RATE_LIMITED', { retryAfterSec: Math.ceil((recent[0] + 60 * MIN - now) / SEC) })
+    }
+
+    entry.sentAt = [...recent, now]
+    entry.otpExpiresAt = now + OTP_TTL_MS
+    entry.failed = 0
+    passwordResets.set(email, entry)
+    if (accounts.has(email)) console.info(`[MSW] OTP đặt lại mật khẩu cho ${email}: ${MOCK_OTP}`)
+    return new HttpResponse(null, { status: 202 })
+  }),
+
+  http.post(`${BASE}/auth/password/reset`, async ({ request }) => {
+    await delay(600)
+    const { email: raw, otp, newPassword } = (await request.json()) as {
+      email: string
+      otp: string
+      newPassword: string
+    }
+    const email = raw.trim().toLowerCase()
+    const entry = passwordResets.get(email)
+    const account = accounts.get(email)
+    const now = Date.now()
+
+    if (!newPassword || newPassword.length < 8) return error(400, 'VALIDATION_FAILED', { fields: ['newPassword'] })
+    if (!entry || entry.otpExpiresAt <= now) return error(410, 'OTP_EXPIRED')
+    if (entry.lockedUntil > now) return error(423, 'OTP_LOCKED')
+
+    // Email không có tài khoản: xử lý như mã sai để không lộ email nào tồn tại
+    if (!account || otp !== MOCK_OTP) {
+      entry.failed += 1
+      if (entry.failed >= OTP_MAX_FAILED) {
+        entry.lockedUntil = now + LOCK_MS
+        return error(423, 'OTP_LOCKED')
+      }
+      return error(400, 'OTP_INVALID', { attemptsLeft: OTP_MAX_FAILED - entry.failed })
+    }
+
+    // OTP dùng một lần; tài khoản chỉ có Google cũng có thêm đăng nhập mật khẩu
+    account.password = newPassword
+    if (!account.user.authProviders.includes('password')) account.user.authProviders.push('password')
+    passwordResets.delete(email)
+    loginFailed = 0
+    loginLockedUntil = 0
+    return new HttpResponse(null, { status: 204 })
+  }),
+
+  // Mock chỉ đọc payload của ID token Google, KHÔNG xác minh chữ ký (backend thật phải xác minh)
+  http.post(`${BASE}/auth/google`, async ({ request }) => {
+    await delay(500)
+    const { idToken } = (await request.json()) as { idToken?: string }
+    const claims = idToken ? decodeIdToken(idToken) : {}
+    const email = claims.email?.toLowerCase()
+    if (!email) return error(401, 'GOOGLE_TOKEN_INVALID')
+
+    const existing = accounts.get(email)
+    if (existing) {
+      // Email trùng tài khoản mật khẩu chưa liên kết Google
+      if (!existing.user.authProviders.includes('google')) return error(409, 'ACCOUNT_LINK_REQUIRED')
+      return HttpResponse.json(authResponse(existing.user))
+    }
+
+    const user: Me = {
+      ...makeUser(crypto.randomUUID().replaceAll('-', '').slice(0, 24), email, claims.name ?? email.split('@')[0]),
+      avatarUrl: claims.picture ?? null,
+      authProviders: ['google'],
+    }
+    accounts.set(email, { password: '', user })
+    return HttpResponse.json({ ...authResponse(user), isNewUser: true })
   }),
 
   // Mock không giữ cookie refresh: tải lại trang sẽ quay về /login

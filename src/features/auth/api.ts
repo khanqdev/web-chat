@@ -4,6 +4,7 @@ import { http } from '@/lib/http'
 import { useSession } from '@/stores/session'
 import type { AuthResponse, RegisterRequest, RegisterResponse } from '@/types/api'
 
+import { usePendingPasswordReset } from './pending-password-reset'
 import { usePendingRegistration } from './pending-registration'
 import type { LoginInput } from './schema'
 
@@ -16,11 +17,25 @@ export function useLogin() {
   })
 }
 
+/** POST /auth/google với ID token lấy từ Google Identity Services */
+export function useGoogleLogin() {
+  const setSession = useSession((s) => s.setSession)
+  return useMutation({
+    mutationFn: (idToken: string) =>
+      http<AuthResponse>('/auth/google', { method: 'POST', body: { idToken }, anonymous: true }),
+    onSuccess: setSession,
+  })
+}
+
 export function useLogout() {
   const clearSession = useSession((s) => s.clearSession)
   return useMutation({
     mutationFn: () => http<void>('/auth/logout', { method: 'POST' }),
-    onSettled: clearSession,
+    onSettled: () => {
+      clearSession()
+      // Không để Google tự chọn lại tài khoản vừa đăng xuất
+      window.google?.accounts.id.disableAutoSelect()
+    },
   })
 }
 
@@ -39,6 +54,39 @@ export function useResendOtp() {
     mutationFn: (email: string) =>
       http<RegisterResponse>('/auth/register/resend-otp', { method: 'POST', body: { email }, anonymous: true }),
     onSuccess: setPending,
+  })
+}
+
+// Contract chưa chốt body của 202 /auth/password/forgot → tự tính theo quy tắc (OTP 5 phút, gửi lại sau 60 giây)
+const OTP_TTL_SEC = 5 * 60
+const RESEND_GAP_SEC = 60
+
+export function useForgotPassword() {
+  const setPending = usePendingPasswordReset((s) => s.setPending)
+  return useMutation({
+    mutationFn: async (email: string): Promise<RegisterResponse> => {
+      const body = await http<Partial<RegisterResponse> | undefined>('/auth/password/forgot', {
+        method: 'POST',
+        body: { email },
+        anonymous: true,
+      })
+      const now = Date.now()
+      return {
+        email,
+        otpExpiresAt: body?.otpExpiresAt ?? new Date(now + OTP_TTL_SEC * 1000).toISOString(),
+        resendAvailableAt: body?.resendAvailableAt ?? new Date(now + RESEND_GAP_SEC * 1000).toISOString(),
+      }
+    },
+    onSuccess: setPending,
+  })
+}
+
+export function useResetPassword() {
+  const clearPending = usePendingPasswordReset((s) => s.clearPending)
+  return useMutation({
+    mutationFn: (input: { email: string; otp: string; newPassword: string }) =>
+      http<void>('/auth/password/reset', { method: 'POST', body: input, anonymous: true }),
+    onSuccess: clearPending,
   })
 }
 

@@ -9,12 +9,13 @@ import { ApiError } from '@/lib/http'
 
 import { useRegister } from '../api'
 import { AuthLayout, BrandMark } from '../components/AuthLayout'
-import { AuthTitle, FormAlert, FormField, GoogleButton, OrDivider, SubmitButton } from '../components/FormParts'
+import { AuthTitle, FormAlert, FormField, OrDivider, SubmitButton } from '../components/FormParts'
 import { fieldAria, fieldClass } from '../components/form-utils'
+import { GoogleSignInButton } from '../components/GoogleSignInButton'
 import { PasswordInput } from '../components/PasswordInput'
 import { usePendingRegistration } from '../pending-registration'
 import { registerSchema, type RegisterInput } from '../schema'
-import { useGoogleSignIn } from '../use-google-sign-in'
+import { useGoogleAuth } from '../use-google-auth'
 
 // Trường server báo lỗi trong VALIDATION_FAILED.details.fields → khoá bản dịch
 const SERVER_FIELD_ERRORS: Partial<Record<keyof RegisterInput, string>> = {
@@ -27,7 +28,6 @@ export function RegisterPage() {
   const { t, i18n } = useTranslation('auth')
   const navigate = useNavigate()
   const registerMutation = useRegister()
-  const google = useGoogleSignIn()
   const pendingEmail = usePendingRegistration((s) => s.pending?.email)
 
   const {
@@ -35,11 +35,15 @@ export function RegisterPage() {
     handleSubmit,
     setError,
     getValues,
+    setValue,
     formState: { errors },
   } = useForm<RegisterInput>({
     resolver: zodResolver(registerSchema),
     defaultValues: { displayName: '', email: pendingEmail ?? '', password: '', confirmPassword: '' },
   })
+
+  // Tài khoản Google mới được tạo luôn ở /auth/google (isNewUser), không cần OTP
+  const google = useGoogleAuth({ onLinkRequired: (email) => setValue('email', email) })
 
   const onSubmit = handleSubmit(({ displayName, email, password }) => {
     google.reset()
@@ -59,9 +63,9 @@ export function RegisterPage() {
     )
   })
 
-  const onGoogle = () => {
+  const onGoogleCredential = (idToken: string) => {
     registerMutation.reset()
-    google.start()
+    google.signIn(idToken)
   }
 
   const apiError = registerMutation.error
@@ -75,7 +79,11 @@ export function RegisterPage() {
       <AuthTitle>{t('register.title')}</AuthTitle>
       <p className="-mt-1.5 text-sm text-muted-foreground">{t('register.subtitle')}</p>
 
-      <GoogleButton onClick={onGoogle} />
+      <GoogleSignInButton
+        onCredential={onGoogleCredential}
+        onError={google.showError}
+        disabled={google.isPending || registerMutation.isPending}
+      />
       <OrDivider />
 
       <form noValidate onSubmit={onSubmit} className="flex flex-col gap-3.5">

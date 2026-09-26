@@ -10,8 +10,13 @@ import { createAppRouter } from './router'
 
 async function enableMocks() {
   if (import.meta.env.VITE_USE_MOCKS !== 'true') return
-  const { worker } = await import('@/mocks/browser')
-  await worker.start({ onUnhandledRequest: 'bypass' })
+  try {
+    const { worker } = await import('@/mocks/browser')
+    await worker.start({ onUnhandledRequest: 'bypass' })
+  } catch (error) {
+    // Không đăng ký được service worker (trình duyệt chặn, chế độ riêng tư…): vẫn render app, gọi API thật
+    console.warn('[MSW] Không bật được mock API, dùng backend thật.', error)
+  }
 }
 
 void enableMocks().then(() => {
