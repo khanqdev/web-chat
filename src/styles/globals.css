@@ -1,0 +1,173 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import '@fontsource/be-vietnam-pro/vietnamese-400.css';
+@import '@fontsource/be-vietnam-pro/vietnamese-500.css';
+@import '@fontsource/be-vietnam-pro/vietnamese-600.css';
+@import '@fontsource/be-vietnam-pro/vietnamese-700.css';
+@import '@fontsource/be-vietnam-pro/latin-400.css';
+@import '@fontsource/be-vietnam-pro/latin-500.css';
+@import '@fontsource/be-vietnam-pro/latin-600.css';
+@import '@fontsource/be-vietnam-pro/latin-700.css';
+
+@custom-variant dark (&:is(.dark *));
+
+/* Token màu theo docs/design/login-spec.md (liquid glass, sáng/tối) */
+:root {
+  --radius: 0.875rem;
+
+  --background: #e9edf5;
+  --foreground: #10152a;
+  --muted-foreground: #475069;
+  --card: rgb(255 255 255 / 0.78);
+  --card-foreground: var(--foreground);
+  --popover: rgb(255 255 255 / 0.9);
+  --popover-foreground: var(--foreground);
+  --primary: #3460ee;
+  --primary-foreground: #ffffff;
+  --secondary: rgb(255 255 255 / 0.6);
+  --secondary-foreground: var(--foreground);
+  --muted: rgb(16 21 42 / 0.06);
+  --accent: rgb(16 21 42 / 0.06);
+  --accent-foreground: var(--foreground);
+  --destructive: #c0271b;
+  --border: rgb(16 21 42 / 0.08);
+  --input: rgb(16 21 42 / 0.08);
+  --ring: rgb(52 96 238 / 0.55);
+
+  /* Nhóm biến riêng của wireframe */
+  --field: rgb(255 255 255 / 0.6);
+  --line: rgb(16 21 42 / 0.08);
+  --accent-ink: #2446b8;
+  --danger: #c0271b;
+  --danger-soft: rgb(192 39 27 / 0.1);
+  --accent-gradient: linear-gradient(135deg, #3460ee, #6a4cf0);
+
+  --glass-bg: rgb(255 255 255 / 0.55);
+  --glass-bg-strong: rgb(255 255 255 / 0.78);
+  --glass-border: rgb(255 255 255 / 0.75);
+  --glass-shadow: 0 10px 40px rgb(28 40 90 / 0.14), inset 0 1px 0 rgb(255 255 255 / 0.9);
+  --glass-blur: 32px;
+
+  --blob-1: rgb(92 132 255 / 0.55);
+  --blob-2: rgb(170 120 255 / 0.45);
+  --blob-3: rgb(64 210 190 / 0.4);
+}
+
+.dark {
+  --background: #090c16;
+  --foreground: #eef1fa;
+  --muted-foreground: #a6adc4;
+  --card: rgb(30 36 58 / 0.8);
+  --popover: rgb(30 36 58 / 0.95);
+  --secondary: rgb(255 255 255 / 0.07);
+  --muted: rgb(255 255 255 / 0.07);
+  --accent: rgb(255 255 255 / 0.07);
+  --destructive: #ff7a6e;
+  --border: rgb(255 255 255 / 0.09);
+  --input: rgb(255 255 255 / 0.09);
+  --ring: rgb(169 190 255 / 0.55);
+
+  --field: rgb(255 255 255 / 0.07);
+  --line: rgb(255 255 255 / 0.09);
+  --accent-ink: #a9beff;
+  --danger: #ff7a6e;
+  --danger-soft: rgb(255 122 110 / 0.14);
+
+  --glass-bg: rgb(20 25 42 / 0.55);
+  --glass-bg-strong: rgb(30 36 58 / 0.8);
+  --glass-border: rgb(255 255 255 / 0.1);
+  --glass-shadow: 0 10px 40px rgb(0 0 0 / 0.45), inset 0 1px 0 rgb(255 255 255 / 0.08);
+
+  --blob-1: rgb(60 90 255 / 0.45);
+  --blob-2: rgb(140 70 230 / 0.4);
+  --blob-3: rgb(20 160 160 / 0.35);
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  :root {
+    --glass-bg: #ffffff;
+    --glass-bg-strong: #ffffff;
+    --glass-blur: 0px;
+  }
+  .dark {
+    --glass-bg: #151a2c;
+    --glass-bg-strong: #1e243a;
+  }
+}
+
+@theme inline {
+  --font-sans: 'Be Vietnam Pro', system-ui, sans-serif;
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-field: var(--field);
+  --color-line: var(--line);
+  --color-accent-ink: var(--accent-ink);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --color-glass: var(--glass-bg);
+  --color-glass-strong: var(--glass-bg-strong);
+  --color-glass-border: var(--glass-border);
+
+  --animate-caret-blink: caret-blink 1.25s ease-out infinite;
+  @keyframes caret-blink {
+    0%,
+    70%,
+    100% {
+      opacity: 1;
+    }
+    20%,
+    50% {
+      opacity: 0;
+    }
+  }
+}
+
+@utility glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur)) saturate(170%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(170%);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+}
+
+@utility bg-accent-gradient {
+  background-image: var(--accent-gradient);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    color-scheme: light;
+  }
+  html.dark {
+    color-scheme: dark;
+  }
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    line-height: 1.5;
+  }
+}

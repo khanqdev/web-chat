@@ -1,0 +1,14 @@
+{
+  "appName": "Web Chat",
+  "language": "Language",
+  "theme": {
+    "toggle": "Toggle light/dark theme"
+  },
+  "comingSoon": "This feature is under construction.",
+  "backToLogin": "Back to sign in",
+  "home": {
+    "title": "Hello, {{name}}",
+    "description": "You are signed in. The chat screen comes next.",
+    "logout": "Sign out"
+  }
+}
