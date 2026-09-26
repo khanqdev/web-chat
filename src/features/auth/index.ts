@@ -1,5 +1,6 @@
-﻿export { useLogin, useLogout } from './api'
+export { useLogin, useLogout } from './api'
+export { ForgotPasswordPage } from './pages/ForgotPasswordPage'
 export { LoginPage } from './pages/LoginPage'
-export { PlaceholderPage } from './pages/PlaceholderPage'
 export { RegisterPage } from './pages/RegisterPage'
+export { ResetPasswordPage } from './pages/ResetPasswordPage'
 export { VerifyOtpPage } from './pages/VerifyOtpPage'

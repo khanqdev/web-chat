@@ -11,6 +11,7 @@ import { AuthLayout, BrandMark } from '../components/AuthLayout'
 import { AuthTitle, FormAlert, FormField, OrDivider, SubmitButton } from '../components/FormParts'
 import { fieldAria, fieldClass } from '../components/form-utils'
 import { GoogleSignInButton } from '../components/GoogleSignInButton'
+import { StatusNote } from '../components/OtpParts'
 import { PasswordInput } from '../components/PasswordInput'
 import { loginSchema, type LoginInput } from '../schema'
 import { useGoogleAuth } from '../use-google-auth'
@@ -21,6 +22,7 @@ export function LoginPage() {
   const [searchParams] = useSearchParams()
   const location = useLocation()
   const login = useLogin()
+  const navState = location.state as { email?: string; notice?: 'passwordReset' } | null
 
   // Chỉ nhận đường dẫn nội bộ để tránh open redirect
   const redirectTo = () => {
@@ -31,13 +33,14 @@ export function LoginPage() {
   const {
     register,
     handleSubmit,
+    getValues,
     setValue,
     setFocus,
     formState: { errors },
   } = useForm<LoginInput>({
     resolver: zodResolver(loginSchema),
-    // Điền sẵn email khi chuyển từ trang đăng ký (email đã tồn tại); dùng state để email không nằm trên URL
-    defaultValues: { email: (location.state as { email?: string } | null)?.email ?? '', password: '' },
+    // Điền sẵn email khi chuyển từ trang đăng ký / đặt lại mật khẩu; dùng state để email không nằm trên URL
+    defaultValues: { email: navState?.email ?? '', password: '' },
   })
 
   const google = useGoogleAuth({
@@ -98,12 +101,21 @@ export function LoginPage() {
         </FormField>
 
         <div className="flex justify-end text-[13px]">
-          <Link to="/forgot-password" className="text-accent-ink hover:underline">
+          <Link
+            to="/forgot-password"
+            // Mang email đang nhập sang trang quên mật khẩu (đọc lúc bấm vì input không điều khiển)
+            onClick={(e) => {
+              e.preventDefault()
+              void navigate('/forgot-password', { state: { email: getValues('email') } })
+            }}
+            className="text-accent-ink hover:underline"
+          >
             {t('login.forgotPassword')}
           </Link>
         </div>
 
         <FormAlert>{formError}</FormAlert>
+        {!formError && navState?.notice === 'passwordReset' && <StatusNote>{t('reset.success')}</StatusNote>}
 
         <SubmitButton pending={login.isPending} label={t('login.submit')} pendingLabel={t('login.submitting')} />
       </form>

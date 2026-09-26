@@ -11,7 +11,7 @@ npm run dev        # http://localhost:5173
 
 Mặc định `npm run dev` bật **MSW** (`VITE_USE_MOCKS=true` trong `.env.development`) nên không cần backend. Tài khoản mẫu và mã OTP cố định của mock nằm ở `src/mocks/data.ts` (mã OTP cũng được in ra console khi đăng ký). Mock áp dụng đúng quy tắc của contract: sai mật khẩu/OTP 5 lần bị khoá 15 phút, OTP hết hạn sau 5 phút, gửi lại cách nhau ≥ 60 giây. Trạng thái mock nằm trong bộ nhớ nên tải lại trang là mất (tài khoản vừa đăng ký cũng mất).
 
-Các màn đã có: `/login`, `/register`, `/register/verify` (OTP), `/` (trang tạm sau đăng nhập).
+Các màn đã có: `/login` (email + Google), `/register`, `/register/verify` (OTP), `/forgot-password`, `/forgot-password/reset` (OTP + mật khẩu mới), `/` (trang tạm sau đăng nhập).
 
 Để gọi backend Spring Boot thật (proxy `/api`, `/ws` → `localhost:8080`), tạo `.env.local`:
 

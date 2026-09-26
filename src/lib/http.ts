@@ -85,6 +85,7 @@ export async function http<T>(path: string, options: RequestOptions = {}): Promi
   }
 
   if (!res.ok) throw await toApiError(res)
-  if (res.status === 204) return undefined as T
-  return (await res.json()) as T
+  // 204 hoặc 202 không có body
+  const text = await res.text()
+  return (text ? JSON.parse(text) : undefined) as T
 }

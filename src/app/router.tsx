@@ -1,6 +1,6 @@
 ﻿import { createBrowserRouter, redirect, type LoaderFunctionArgs } from 'react-router'
 
-import { LoginPage, PlaceholderPage, RegisterPage, VerifyOtpPage } from '@/features/auth'
+import { ForgotPasswordPage, LoginPage, RegisterPage, ResetPasswordPage, VerifyOtpPage } from '@/features/auth'
 import { refreshSession } from '@/lib/http'
 import { useSession } from '@/stores/session'
 
@@ -32,7 +32,8 @@ export const createAppRouter = () =>
         { path: '/login', element: <LoginPage /> },
         { path: '/register', element: <RegisterPage /> },
         { path: '/register/verify', element: <VerifyOtpPage /> },
-        { path: '/forgot-password', element: <PlaceholderPage titleKey="forgot.title" /> },
+        { path: '/forgot-password', element: <ForgotPasswordPage /> },
+        { path: '/forgot-password/reset', element: <ResetPasswordPage /> },
       ],
     },
     {
