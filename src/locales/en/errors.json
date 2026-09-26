@@ -1,0 +1,9 @@
+{
+  "AUTH_INVALID_CREDENTIALS": "Incorrect email or password.",
+  "AUTH_LOCKED": "Too many failed attempts. Try again in {{minutes}} minutes.",
+  "RATE_LIMITED": "You're going too fast. Try again in {{seconds}} seconds.",
+  "GOOGLE_TOKEN_INVALID": "Could not verify your Google account. Please try again.",
+  "ACCOUNT_LINK_REQUIRED": "This email is registered with a password. Sign in with your password first to link Google.",
+  "NETWORK_ERROR": "Cannot reach the server. Check your connection and try again.",
+  "INTERNAL_ERROR": "Something went wrong. Please try again."
+}

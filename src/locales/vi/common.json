@@ -1,0 +1,14 @@
+{
+  "appName": "Web Chat",
+  "language": "Ngôn ngữ",
+  "theme": {
+    "toggle": "Đổi giao diện sáng/tối"
+  },
+  "comingSoon": "Tính năng đang được xây dựng.",
+  "backToLogin": "Quay lại đăng nhập",
+  "home": {
+    "title": "Xin chào, {{name}}",
+    "description": "Bạn đã đăng nhập. Khung chat sẽ được xây dựng ở bước tiếp theo.",
+    "logout": "Đăng xuất"
+  }
+}
