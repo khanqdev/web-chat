@@ -30,6 +30,30 @@ Các biến môi trường khác xem `.env.example`.
 | `npm run typecheck` | Chỉ kiểm tra kiểu |
 | `npm run lint` | ESLint |
 
+## Deploy lên Vercel
+
+`vercel.json` đã cấu hình sẵn:
+
+- Mọi route không phải `/api` trả về `index.html` (React Router ở chế độ SPA).
+- `/api/*` được Vercel chuyển tiếp sang backend. Trình duyệt chỉ thấy một domain nên cookie refresh `SameSite=Strict` vẫn chạy và REST không cần CORS.
+- `/assets/*` cache 1 năm (tên file có hash); `Cross-Origin-Opener-Policy: same-origin-allow-popups` để popup Google Sign-In hoạt động.
+
+Các bước:
+
+1. **Sửa domain backend** trong `vercel.json`: thay `CHANGE-ME.duckdns.org` bằng domain thật của server (Vercel không đọc được biến môi trường trong `rewrites`).
+2. Trên vercel.com → **Add New Project** → import repo `khanqdev/web-chat`. Framework Vite được nhận tự động.
+3. **Environment Variables** (Production + Preview):
+
+   | Biến | Giá trị |
+   |---|---|
+   | `VITE_API_BASE_URL` | `/api` (server hiện dùng `/api/auth`; đổi thành `/api/v1` khi server đổi path) |
+   | `VITE_GOOGLE_CLIENT_ID` | Client ID Google OAuth |
+   | `VITE_WS_URL` | `wss://<domain-backend>/ws-chat/websocket` |
+
+   Không đặt `VITE_USE_MOCKS` (production gọi backend thật). Muốn bản demo chỉ có mock thì đặt `VITE_USE_MOCKS=true`.
+4. Google Cloud Console → OAuth client → **Authorized JavaScript origins**: thêm `https://<tên-dự-án>.vercel.app`.
+5. Phía backend: thêm `https://<tên-dự-án>.vercel.app` vào `ALLOWED_ORIGINS` (cho WebSocket, vì Vercel không chuyển tiếp WebSocket). Cookie refresh **không** đặt thuộc tính `Domain`.
+
 ## Cấu trúc
 
 ```
