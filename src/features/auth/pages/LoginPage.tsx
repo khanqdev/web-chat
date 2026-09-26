@@ -8,11 +8,12 @@ import { errorMessage } from '@/lib/errors'
 
 import { useLogin } from '../api'
 import { AuthLayout, BrandMark } from '../components/AuthLayout'
-import { AuthTitle, FormAlert, FormField, GoogleButton, OrDivider, SubmitButton } from '../components/FormParts'
+import { AuthTitle, FormAlert, FormField, OrDivider, SubmitButton } from '../components/FormParts'
 import { fieldAria, fieldClass } from '../components/form-utils'
+import { GoogleSignInButton } from '../components/GoogleSignInButton'
 import { PasswordInput } from '../components/PasswordInput'
 import { loginSchema, type LoginInput } from '../schema'
-import { useGoogleSignIn } from '../use-google-sign-in'
+import { useGoogleAuth } from '../use-google-auth'
 
 export function LoginPage() {
   const { t } = useTranslation('auth')
@@ -20,11 +21,18 @@ export function LoginPage() {
   const [searchParams] = useSearchParams()
   const location = useLocation()
   const login = useLogin()
-  const google = useGoogleSignIn()
+
+  // Chỉ nhận đường dẫn nội bộ để tránh open redirect
+  const redirectTo = () => {
+    const from = searchParams.get('from')
+    return from?.startsWith('/') && !from.startsWith('//') ? from : '/'
+  }
 
   const {
     register,
     handleSubmit,
+    setValue,
+    setFocus,
     formState: { errors },
   } = useForm<LoginInput>({
     resolver: zodResolver(loginSchema),
@@ -32,21 +40,25 @@ export function LoginPage() {
     defaultValues: { email: (location.state as { email?: string } | null)?.email ?? '', password: '' },
   })
 
+  const google = useGoogleAuth({
+    redirectTo,
+    // Email Google đã đăng ký bằng mật khẩu: điền sẵn email để đăng nhập mật khẩu trước
+    onLinkRequired: (email) => {
+      setValue('email', email)
+      setFocus('password')
+    },
+  })
+
   const onSubmit = handleSubmit((values) => {
     google.reset()
     login.mutate(values, {
-      onSuccess: () => {
-        // Chỉ nhận đường dẫn nội bộ để tránh open redirect
-        const from = searchParams.get('from')
-        const target = from?.startsWith('/') && !from.startsWith('//') ? from : '/'
-        void navigate(target, { replace: true })
-      },
+      onSuccess: () => void navigate(redirectTo(), { replace: true }),
     })
   })
 
-  const onGoogle = () => {
+  const onGoogleCredential = (idToken: string) => {
     login.reset()
-    google.start()
+    google.signIn(idToken)
   }
 
   const formError = login.isError ? errorMessage(login.error) : google.error
@@ -56,7 +68,11 @@ export function LoginPage() {
       <BrandMark />
       <AuthTitle>{t('login.title')}</AuthTitle>
 
-      <GoogleButton onClick={onGoogle} />
+      <GoogleSignInButton
+        onCredential={onGoogleCredential}
+        onError={google.showError}
+        disabled={google.isPending || login.isPending}
+      />
       <OrDivider />
 
       <form noValidate onSubmit={onSubmit} className="flex flex-col gap-3.5">

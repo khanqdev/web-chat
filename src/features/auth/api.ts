@@ -16,11 +16,25 @@ export function useLogin() {
   })
 }
 
+/** POST /auth/google với ID token lấy từ Google Identity Services */
+export function useGoogleLogin() {
+  const setSession = useSession((s) => s.setSession)
+  return useMutation({
+    mutationFn: (idToken: string) =>
+      http<AuthResponse>('/auth/google', { method: 'POST', body: { idToken }, anonymous: true }),
+    onSuccess: setSession,
+  })
+}
+
 export function useLogout() {
   const clearSession = useSession((s) => s.clearSession)
   return useMutation({
     mutationFn: () => http<void>('/auth/logout', { method: 'POST' }),
-    onSettled: clearSession,
+    onSettled: () => {
+      clearSession()
+      // Không để Google tự chọn lại tài khoản vừa đăng xuất
+      window.google?.accounts.id.disableAutoSelect()
+    },
   })
 }
 

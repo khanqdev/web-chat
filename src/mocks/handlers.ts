@@ -1,5 +1,6 @@
 import { delay, http, HttpResponse } from 'msw'
 
+import { decodeIdToken } from '@/lib/google-identity'
 import type { AuthResponse, Me, RegisterRequest, RegisterResponse } from '@/types/api'
 
 import { DEMO_ACCOUNT, demoUser, makeUser, MOCK_OTP } from './data'
@@ -146,6 +147,30 @@ export const handlers = [
     accounts.set(email, { password: req.password, user })
     pendingSignups.delete(email)
     return HttpResponse.json({ ...authResponse(user), isNewUser: true }, { status: 201 })
+  }),
+
+  // Mock chỉ đọc payload của ID token Google, KHÔNG xác minh chữ ký (backend thật phải xác minh)
+  http.post(`${BASE}/auth/google`, async ({ request }) => {
+    await delay(500)
+    const { idToken } = (await request.json()) as { idToken?: string }
+    const claims = idToken ? decodeIdToken(idToken) : {}
+    const email = claims.email?.toLowerCase()
+    if (!email) return error(401, 'GOOGLE_TOKEN_INVALID')
+
+    const existing = accounts.get(email)
+    if (existing) {
+      // Email trùng tài khoản mật khẩu chưa liên kết Google
+      if (!existing.user.authProviders.includes('google')) return error(409, 'ACCOUNT_LINK_REQUIRED')
+      return HttpResponse.json(authResponse(existing.user))
+    }
+
+    const user: Me = {
+      ...makeUser(crypto.randomUUID().replaceAll('-', '').slice(0, 24), email, claims.name ?? email.split('@')[0]),
+      avatarUrl: claims.picture ?? null,
+      authProviders: ['google'],
+    }
+    accounts.set(email, { password: '', user })
+    return HttpResponse.json({ ...authResponse(user), isNewUser: true })
   }),
 
   // Mock không giữ cookie refresh: tải lại trang sẽ quay về /login
