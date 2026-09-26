@@ -1,29 +1,26 @@
-import { useState } from 'react'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { Loader2 } from 'lucide-react'
+﻿import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { Link, useNavigate, useSearchParams } from 'react-router'
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router'
 
-import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { errorMessage } from '@/lib/errors'
 
 import { useLogin } from '../api'
 import { AuthLayout, BrandMark } from '../components/AuthLayout'
-import { GoogleIcon } from '../components/GoogleIcon'
+import { AuthTitle, FormAlert, FormField, GoogleButton, OrDivider, SubmitButton } from '../components/FormParts'
+import { fieldAria, fieldClass } from '../components/form-utils'
 import { PasswordInput } from '../components/PasswordInput'
 import { loginSchema, type LoginInput } from '../schema'
-
-const fieldClass = 'h-[46px] rounded-[14px] text-sm'
+import { useGoogleSignIn } from '../use-google-sign-in'
 
 export function LoginPage() {
   const { t } = useTranslation('auth')
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
+  const location = useLocation()
   const login = useLogin()
-  const [googleError, setGoogleError] = useState<string | null>(null)
+  const google = useGoogleSignIn()
 
   const {
     register,
@@ -31,11 +28,12 @@ export function LoginPage() {
     formState: { errors },
   } = useForm<LoginInput>({
     resolver: zodResolver(loginSchema),
-    defaultValues: { email: '', password: '' },
+    // Điền sẵn email khi chuyển từ trang đăng ký (email đã tồn tại); dùng state để email không nằm trên URL
+    defaultValues: { email: (location.state as { email?: string } | null)?.email ?? '', password: '' },
   })
 
   const onSubmit = handleSubmit((values) => {
-    setGoogleError(null)
+    google.reset()
     login.mutate(values, {
       onSuccess: () => {
         // Chỉ nhận đường dẫn nội bộ để tránh open redirect
@@ -48,65 +46,40 @@ export function LoginPage() {
 
   const onGoogle = () => {
     login.reset()
-    // TODO(M1-08): tích hợp Google Identity Services, gửi idToken tới POST /auth/google
-    if (!import.meta.env.VITE_GOOGLE_CLIENT_ID) setGoogleError(t('googleNotConfigured'))
+    google.start()
   }
 
-  const formError = login.isError ? errorMessage(login.error) : googleError
+  const formError = login.isError ? errorMessage(login.error) : google.error
 
   return (
     <AuthLayout>
       <BrandMark />
-      <h1 className="mt-2 text-[26px] leading-tight font-bold tracking-[-0.01em]">{t('login.title')}</h1>
+      <AuthTitle>{t('login.title')}</AuthTitle>
 
-      <Button type="button" variant="outline" className={`${fieldClass} gap-2.5`} onClick={onGoogle}>
-        <GoogleIcon className="size-[18px]" />
-        {t('login.google')}
-      </Button>
-
-      <div className="flex items-center gap-3 text-[13px] text-muted-foreground">
-        <div className="h-px grow bg-line" />
-        {t('login.or')}
-        <div className="h-px grow bg-line" />
-      </div>
+      <GoogleButton onClick={onGoogle} />
+      <OrDivider />
 
       <form noValidate onSubmit={onSubmit} className="flex flex-col gap-3.5">
-        <div className="flex flex-col gap-1.5">
-          <Label htmlFor="email">{t('login.email')}</Label>
+        <FormField id="email" label={t('login.email')} error={errors.email?.message}>
           <Input
-            id="email"
             type="email"
             autoComplete="email"
             placeholder={t('login.emailPlaceholder')}
-            aria-invalid={!!errors.email}
-            aria-describedby={errors.email ? 'email-error' : undefined}
             className={fieldClass}
+            {...fieldAria('email', errors.email?.message)}
             {...register('email')}
           />
-          {errors.email?.message && (
-            <p id="email-error" className="text-[13px] text-danger">
-              {t(errors.email.message as 'validation.emailInvalid')}
-            </p>
-          )}
-        </div>
+        </FormField>
 
-        <div className="flex flex-col gap-1.5">
-          <Label htmlFor="password">{t('login.password')}</Label>
+        <FormField id="password" label={t('login.password')} error={errors.password?.message}>
           <PasswordInput
-            id="password"
             autoComplete="current-password"
             placeholder={t('login.passwordPlaceholder')}
-            aria-invalid={!!errors.password}
-            aria-describedby={errors.password ? 'password-error' : undefined}
             className={fieldClass}
+            {...fieldAria('password', errors.password?.message)}
             {...register('password')}
           />
-          {errors.password?.message && (
-            <p id="password-error" className="text-[13px] text-danger">
-              {t(errors.password.message as 'validation.passwordMin')}
-            </p>
-          )}
-        </div>
+        </FormField>
 
         <div className="flex justify-end text-[13px]">
           <Link to="/forgot-password" className="text-accent-ink hover:underline">
@@ -114,22 +87,9 @@ export function LoginPage() {
           </Link>
         </div>
 
-        <div role="alert" aria-live="assertive" className="empty:hidden">
-          {formError && (
-            <div className="rounded-[14px] bg-danger-soft px-3.5 py-2.5 text-[13px] text-danger">{formError}</div>
-          )}
-        </div>
+        <FormAlert>{formError}</FormAlert>
 
-        <Button
-          type="submit"
-          variant="gradient"
-          disabled={login.isPending}
-          aria-busy={login.isPending}
-          className="h-12 rounded-[14px] text-[15px] font-semibold"
-        >
-          {login.isPending && <Loader2 className="animate-spin" />}
-          {login.isPending ? t('login.submitting') : t('login.submit')}
-        </Button>
+        <SubmitButton pending={login.isPending} label={t('login.submit')} pendingLabel={t('login.submitting')} />
       </form>
 
       <p className="text-center text-sm text-muted-foreground">

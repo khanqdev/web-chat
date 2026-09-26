@@ -1,4 +1,4 @@
-# Web Chat – Frontend
+﻿# Web Chat – Frontend
 
 Vite + React 19 + TypeScript, Tailwind CSS v4, shadcn/ui, TanStack Query, Zustand, React Router v7, react-hook-form + zod, react-i18next (vi/en). Kiến trúc chi tiết: `docs/plan/06-kien-truc-frontend.md`; thiết kế: `docs/design/`.
 
@@ -9,7 +9,9 @@ npm install
 npm run dev        # http://localhost:5173
 ```
 
-Mặc định `npm run dev` bật **MSW** (`VITE_USE_MOCKS=true` trong `.env.development`) nên không cần backend. Tài khoản mẫu nằm ở `src/mocks/data.ts`. Nhập sai mật khẩu 5 lần sẽ thấy thông báo khoá 15 phút (tải lại trang để xoá trạng thái mock).
+Mặc định `npm run dev` bật **MSW** (`VITE_USE_MOCKS=true` trong `.env.development`) nên không cần backend. Tài khoản mẫu và mã OTP cố định của mock nằm ở `src/mocks/data.ts` (mã OTP cũng được in ra console khi đăng ký). Mock áp dụng đúng quy tắc của contract: sai mật khẩu/OTP 5 lần bị khoá 15 phút, OTP hết hạn sau 5 phút, gửi lại cách nhau ≥ 60 giây. Trạng thái mock nằm trong bộ nhớ nên tải lại trang là mất (tài khoản vừa đăng ký cũng mất).
+
+Các màn đã có: `/login`, `/register`, `/register/verify` (OTP), `/` (trang tạm sau đăng nhập).
 
 Để gọi backend Spring Boot thật (proxy `/api`, `/ws` → `localhost:8080`), tạo `.env.local`:
 

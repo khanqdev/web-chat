@@ -1,10 +1,10 @@
-import { useTranslation } from 'react-i18next'
+﻿import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
 
 import { AuthLayout, BrandMark } from '../components/AuthLayout'
 
-/** Trang tạm cho /register và /forgot-password, sẽ thay ở các story M1-01, M1-04 */
-export function PlaceholderPage({ titleKey }: { titleKey: 'register.title' | 'forgot.title' }) {
+/** Trang tạm cho /forgot-password, sẽ thay ở story M1-04 */
+export function PlaceholderPage({ titleKey }: { titleKey: 'forgot.title' }) {
   const { t } = useTranslation(['auth', 'common'])
   return (
     <AuthLayout>

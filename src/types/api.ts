@@ -26,6 +26,20 @@ export type AuthResponse = {
   isNewUser?: boolean
 }
 
+export type RegisterRequest = {
+  email: string
+  password: string
+  displayName: string
+  language: 'vi' | 'en'
+}
+
+/** 202 của /auth/register và /auth/register/resend-otp */
+export type RegisterResponse = {
+  email: string
+  otpExpiresAt: string
+  resendAvailableAt: string
+}
+
 export type ApiErrorBody = {
   error: {
     code: string

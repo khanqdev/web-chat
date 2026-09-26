@@ -6,14 +6,19 @@ export const DEMO_ACCOUNT = {
   password: 'matkhau123',
 }
 
-export const demoUser: Me = {
-  id: '66f5a1b2c3d4e5f601234567',
-  displayName: 'Demo',
+/** Mã OTP cố định của mock khi đăng ký */
+export const MOCK_OTP = '123456'
+
+export const makeUser = (id: string, email: string, displayName: string, language: 'vi' | 'en' = 'vi'): Me => ({
+  id,
+  displayName,
   avatarUrl: null,
-  email: DEMO_ACCOUNT.email,
+  email,
   emailVerified: true,
   bio: null,
   authProviders: ['password'],
-  settings: { language: 'vi', theme: 'system', whoCanMessage: 'everyone', soundEnabled: true },
-  createdAt: '2026-09-26T00:00:00Z',
-}
+  settings: { language, theme: 'system', whoCanMessage: 'everyone', soundEnabled: true },
+  createdAt: new Date().toISOString(),
+})
+
+export const demoUser: Me = makeUser('66f5a1b2c3d4e5f601234567', DEMO_ACCOUNT.email, 'Demo')
