@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Màn hình chat chính</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:'Be Vietnam Pro',system-ui,sans-serif}
+a{color:#3460EE}a:hover{color:#2446B8}
+button,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+</style>
+</helmet>
+<div style="width: 1280px; height: 800px; position: relative; overflow: hidden; background: {{t.bg}}; color: {{t.text}}; font-family: 'Be Vietnam Pro', system-ui, sans-serif; line-height: 1.5">
+<div aria-hidden="true" style="position: absolute; left: -140px; top: -180px; width: 560px; height: 560px; border-radius: 50%; background: {{t.b1}}; filter: blur(90px)"></div>
+<div aria-hidden="true" style="position: absolute; left: 820px; top: 380px; width: 520px; height: 520px; border-radius: 50%; background: {{t.b2}}; filter: blur(100px)"></div>
+<div aria-hidden="true" style="position: absolute; left: 380px; top: 560px; width: 380px; height: 380px; border-radius: 50%; background: {{t.b3}}; filter: blur(90px)"></div>
+
+<div style="position: absolute; left: 16px; top: 16px; right: 16px; bottom: 16px; display: flex; gap: 16px">
+
+<nav aria-label="Điều hướng chính" style="width: 68px; flex-shrink: 0; border-radius: 24px; background: {{t.glass}}; backdrop-filter: blur(28px) saturate(170%); -webkit-backdrop-filter: blur(28px) saturate(170%); border: 1px solid {{t.border}}; box-shadow: {{t.shadow}}; display: flex; flex-direction: column; align-items: center; padding: 16px 0; gap: 8px">
+<div style="width: 42px; height: 42px; border-radius: 14px; background: linear-gradient(135deg, #3460EE, #6A4CF0); color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px; margin-bottom: 14px">W</div>
+<a href="Main.dc.html" aria-label="Tin nhắn" aria-current="page" style="width: 46px; height: 46px; border-radius: 16px; background: {{t.active}}; color: {{t.accentInk}}; display: flex; align-items: center; justify-content: center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"></path></svg></a>
+<a href="Contacts.dc.html" aria-label="Danh bạ" style="width: 46px; height: 46px; border-radius: 16px; color: {{t.muted}}; display: flex; align-items: center; justify-content: center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="4"></circle><path d="M2 21c0-4 3-6 7-6s7 2 7 6"></path><path d="M16 4a4 4 0 0 1 0 8"></path><path d="M22 21c0-3-1.5-5-4-5.7"></path></svg></a>
+<div style="flex-grow: 1"></div>
+<button type="button" aria-label="Đổi giao diện sáng hoặc tối" style="width: 46px; height: 46px; border: 0; border-radius: 16px; background: transparent; color: {{t.muted}}; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"></path></svg></button>
+<a href="Settings.dc.html" aria-label="Cài đặt" style="width: 46px; height: 46px; border-radius: 16px; color: {{t.muted}}; display: flex; align-items: center; justify-content: center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"></circle><path d="M12 2v3M12 19v3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M2 12h3M19 12h3M4.9 19.1L7 17M17 7l2.1-2.1"></path></svg></a>
+<div style="width: 38px; height: 38px; border-radius: 50%; background: linear-gradient(135deg, #F08A5D, #E0527A); color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 13px; margin-top: 6px">KA</div>
+</nav>
+
+<section aria-label="Danh sách hội thoại" style="width: 330px; flex-shrink: 0; border-radius: 24px; background: {{t.glass}}; backdrop-filter: blur(28px) saturate(170%); -webkit-backdrop-filter: blur(28px) saturate(170%); border: 1px solid {{t.border}}; box-shadow: {{t.shadow}}; display: flex; flex-direction: column; overflow: hidden">
+<div style="padding: 20px 18px 12px; display: flex; align-items: center; gap: 8px">
+<h1 style="margin: 0; font-size: 22px; font-weight: 700; flex-grow: 1; letter-spacing: -0.01em">Tin nhắn</h1>
+<a href="CreateGroup.dc.html" aria-label="Tạo nhóm mới" style="width: 38px; height: 38px; border-radius: 12px; background: linear-gradient(135deg, #3460EE, #6A4CF0); color: #FFFFFF; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></a>
+</div>
+<div style="padding: 0 18px 12px">
+<label style="display: flex; align-items: center; gap: 8px; height: 42px; padding: 0 14px; border-radius: 14px; background: {{t.field}}; border: 1px solid {{t.line}}; color: {{t.muted}}">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg>
+<input type="search" placeholder="Tìm bạn bè, nhóm" aria-label="Tìm kiếm" style="border: 0; background: transparent; outline: none; flex-grow: 1; font-size: 14px">
+</label>
+</div>
+<div style="display: flex; flex-direction: column; gap: 2px; padding: 0 8px">
+
+<div style="display: flex; gap: 12px; padding: 10px 10px; border-radius: 16px; background: {{t.active}}; align-items: center">
+<div style="width: 46px; height: 46px; border-radius: 50%; background: linear-gradient(135deg, #2BB39B, #3C8CE7); color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 14px; flex-shrink: 0">DA</div>
+<div style="flex-grow: 1; min-width: 0">
+<div style="display: flex; gap: 8px"><span style="font-weight: 600; font-size: 15px; flex-grow: 1">Nhóm Dự án Web Chat</span><span style="font-size: 12px; color: {{t.muted}}">09:42</span></div>
+<div style="font-size: 13px; color: {{t.muted}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Tuấn: Mình đẩy bản wireframe lên rồi nhé</div>
+</div>
+</div>
+
+<div style="display: flex; gap: 12px; padding: 10px 10px; border-radius: 16px; align-items: center">
+<div style="position: relative; flex-shrink: 0"><div style="width: 46px; height: 46px; border-radius: 50%; background: linear-gradient(135deg, #5B7CFA, #8F63F0); color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 14px">MA</div></div>
+<div style="flex-grow: 1; min-width: 0">
+<div style="display: flex; gap: 8px"><span style="font-weight: 700; font-size: 15px; flex-grow: 1">Minh Anh</span><span style="font-size: 12px; color: {{t.accentInk}}; font-weight: 600">09:30</span></div>
+<div style="display: flex; gap: 8px; align-items: center"><span style="font-size: 13px; font-weight: 600; flex-grow: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Tối nay họp lúc mấy giờ vậy?</span><span style="min-width: 20px; height: 20px; padding: 0 6px; box-sizing: border-box; border-radius: 10px; background: linear-gradient(135deg, #3460EE, #6A4CF0); color: #FFFFFF; font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center">3</span></div>
+</div>
+</div>
+
+<div style="display: flex; gap: 12px; padding: 10px 10px; border-radius: 16px; align-items: center">
+<div style="width: 46px; height: 46px; border-radius: 50%; background: linear-gradient(135deg, #F08A5D, #E0527A); color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 14px; flex-shrink: 0">HL</div>
+<div style="flex-grow: 1; min-width: 0">
+<div style="display: flex; gap: 8px"><span style="font-weight: 600; font-size: 15px; flex-grow: 1">Hoàng Lan</span><span style="font-size: 12px; color: {{t.muted}}">Hôm qua</span></div>
+<div style="font-size: 13px; color: {{t.muted}}">Bạn: [Ảnh]</div>
+</div>
+</div>
+
+<div style="display: flex; gap: 12px; padding: 10px 10px; border-radius: 16px; align-items: center">
+<div style="width: 46px; height: 46px; border-radius: 50%; background: linear-gradient(135deg, #B06AB3, #4568DC); color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 14px; flex-shrink: 0">GĐ</div>
+<div style="flex-grow: 1; min-width: 0">
+<div style="display: flex; gap: 8px; align-items: center"><span style="font-weight: 600; font-size: 15px; flex-grow: 1">Gia đình</span>
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" role="img" aria-label="Đã tắt thông báo" style="color: {{t.muted}}"><path d="M13.7 21a2 2 0 0 1-3.4 0"></path><path d="M18 8a6 6 0 0 0-9.3-5"></path><path d="M6 8c0 7-3 9-3 9h14"></path><path d="M2 2l20 20"></path></svg>
+<span style="font-size: 12px; color: {{t.muted}}">T2</span></div>
+<div style="font-size: 13px; color: {{t.muted}}">Mẹ: Cuối tuần về ăn cơm nhé</div>
+</div>
+</div>
+
+<div style="display: flex; gap: 12px; padding: 10px 10px; border-radius: 16px; align-items: center">
+<div style="width: 46px; height: 46px; border-radius: 50%; background: linear-gradient(135deg, #5B7CFA, #2BB39B); color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 14px; flex-shrink: 0">QT</div>
+<div style="flex-grow: 1; min-width: 0">
+<div style="display: flex; gap: 8px"><span style="font-weight: 600; font-size: 15px; flex-grow: 1">Quốc Trung</span><span style="font-size: 12px; color: {{t.muted}}">20/09</span></div>
+<div style="font-size: 13px; color: {{t.muted}}; font-style: italic">Tin nhắn đã được thu hồi</div>
+</div>
+</div>
+
+</div>
+</section>
+
+<main style="flex-grow: 1; min-width: 0; border-radius: 24px; background: {{t.glass}}; backdrop-filter: blur(28px) saturate(170%); -webkit-backdrop-filter: blur(28px) saturate(170%); border: 1px solid {{t.border}}; box-shadow: {{t.shadow}}; display: flex; flex-direction: column; overflow: hidden">
+<header style="height: 68px; box-sizing: border-box; padding: 0 20px; border-bottom: 1px solid {{t.line}}; display: flex; align-items: center; gap: 12px">
+<div style="width: 42px; height: 42px; border-radius: 50%; background: linear-gradient(135deg, #2BB39B, #3C8CE7); color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 14px">DA</div>
+<div style="flex-grow: 1">
+<div style="font-weight: 600; font-size: 16px">Nhóm Dự án Web Chat</div>
+<div style="font-size: 13px; color: {{t.muted}}">5 thành viên</div>
+</div>
+<button type="button" aria-label="Tìm trong hội thoại" style="width: 40px; height: 40px; border: 0; border-radius: 12px; background: {{t.hover}}; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg></button>
+<a href="GroupInfo.dc.html" aria-label="Thông tin nhóm" style="width: 40px; height: 40px; border-radius: 12px; background: {{t.active}}; color: {{t.accentInk}}; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 16v-4M12 8h.01"></path></svg></a>
+</header>
+
+<div style="flex-grow: 1; padding: 16px 24px; display: flex; flex-direction: column; gap: 10px; overflow: hidden">
+<div style="align-self: center; font-size: 12px; color: {{t.muted}}; padding: 3px 12px; border-radius: 12px; background: {{t.hover}}">Hôm nay</div>
+<div style="align-self: center; font-size: 12px; color: {{t.muted}}">Minh Anh đã thêm Hoàng Lan vào nhóm</div>
+
+<div style="display: flex; gap: 8px; align-items: flex-end">
+<div style="width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, #5B7CFA, #2BB39B); color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 12px; flex-shrink: 0">TU</div>
+<div style="display: flex; flex-direction: column; gap: 4px; max-width: 460px">
+<span style="font-size: 12px; color: {{t.muted}}; padding-left: 4px">Tuấn</span>
+<div style="padding: 10px 14px; border-radius: 20px 20px 20px 6px; background: {{t.inBubble}}; border: 1px solid {{t.line}}; font-size: 14px">Mình đẩy bản wireframe lên rồi nhé, mọi người xem giúp màn hình danh sách hội thoại.</div>
+<div style="align-self: flex-start; margin-top: -10px; margin-left: 10px; padding: 1px 8px; border-radius: 10px; background: {{t.glass2}}; border: 1px solid {{t.border}}; font-size: 12px">&#10084;&#65039; 2</div>
+</div>
+<div role="toolbar" aria-label="Thao tác tin nhắn" style="display: flex; gap: 2px; padding: 4px; border-radius: 14px; background: {{t.glass2}}; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid {{t.border}}; box-shadow: {{t.shadow}}; margin-bottom: 28px">
+<button type="button" aria-label="Trả lời" style="width: 32px; height: 32px; border: 0; background: transparent; border-radius: 10px; display: flex; align-items: center; justify-content: center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14L4 9l5-5"></path><path d="M20 20v-7a4 4 0 0 0-4-4H4"></path></svg></button>
+<button type="button" aria-label="Thả cảm xúc" style="width: 32px; height: 32px; border: 0; background: transparent; border-radius: 10px; display: flex; align-items: center; justify-content: center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M8 14s1.5 2 4 2 4-2 4-2"></path><path d="M9 9.5h.01M15 9.5h.01"></path></svg></button>
+<button type="button" aria-label="Thêm thao tác" style="width: 32px; height: 32px; border: 0; background: transparent; border-radius: 10px; display: flex; align-items: center; justify-content: center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="5" cy="12" r="1"></circle><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle></svg></button>
+</div>
+</div>
+
+<div style="display: flex; gap: 8px; align-items: flex-end">
+<div style="width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, #5B7CFA, #8F63F0); color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 12px; flex-shrink: 0">MA</div>
+<div style="display: flex; flex-direction: column; gap: 4px">
+<span style="font-size: 12px; color: {{t.muted}}; padding-left: 4px">Minh Anh</span>
+<div style="width: 220px; height: 136px; border-radius: 18px; background: {{t.inBubble}}; border: 1px solid {{t.line}}; display: flex; align-items: center; justify-content: center; color: {{t.muted}}; font-size: 13px; gap: 6px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"></rect><circle cx="9" cy="10" r="2"></circle><path d="M21 16l-5-5-9 9"></path></svg>[Ảnh xem trước]</div>
+</div>
+</div>
+
+<div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px">
+<div style="max-width: 460px; padding: 10px 14px; border-radius: 20px 20px 6px 20px; background: linear-gradient(135deg, #3460EE, #6A4CF0); color: #FFFFFF; font-size: 14px; box-shadow: 0 6px 20px rgba(52,96,238,0.30)">
+<div style="padding: 6px 10px; margin-bottom: 6px; border-radius: 12px; background: rgba(255,255,255,0.18); font-size: 13px"><div style="font-weight: 600">Tuấn</div><div>Mình đẩy bản wireframe lên rồi nhé...</div></div>
+Ổn rồi, mình góp ý thêm phần thanh nhập tin nhắn.
+</div>
+<div style="display: flex; gap: 8px; align-items: center; font-size: 12px; color: {{t.muted}}">
+<span>09:41 · Đã xem</span>
+<div style="display: flex"><div style="width: 16px; height: 16px; border-radius: 50%; background: linear-gradient(135deg, #5B7CFA, #2BB39B)"></div><div style="width: 16px; height: 16px; border-radius: 50%; background: linear-gradient(135deg, #F08A5D, #E0527A); margin-left: -5px"></div><div style="width: 16px; height: 16px; border-radius: 50%; background: linear-gradient(135deg, #5B7CFA, #8F63F0); margin-left: -5px"></div></div>
+</div>
+</div>
+
+<div style="display: flex; flex-direction: column; align-items: flex-end; gap: 6px">
+<div style="display: flex; gap: 10px; align-items: center; width: 290px; box-sizing: border-box; padding: 10px 12px; border-radius: 18px; background: {{t.inBubble}}; border: 1px solid {{t.line}}">
+<div style="width: 38px; height: 38px; border-radius: 12px; background: {{t.active}}; color: {{t.accentInk}}; display: flex; align-items: center; justify-content: center; flex-shrink: 0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><path d="M14 3v6h6"></path></svg></div>
+<div style="flex-grow: 1; min-width: 0"><div style="font-size: 14px; font-weight: 500">user-stories-mvp.pdf</div><div style="font-size: 12px; color: {{t.muted}}">1,2 MB · Đang tải lên 64%</div>
+<div style="height: 4px; border-radius: 2px; background: {{t.line}}; margin-top: 6px"><div style="width: 64%; height: 4px; border-radius: 2px; background: linear-gradient(90deg, #3460EE, #6A4CF0)"></div></div></div>
+</div>
+</div>
+
+<div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px">
+<div style="padding: 10px 14px; border-radius: 20px 20px 6px 20px; background: linear-gradient(135deg, #3460EE, #6A4CF0); color: #FFFFFF; font-size: 14px; opacity: 0.6">Mai mình demo lúc 8h tối nhé</div>
+<div style="display: flex; gap: 6px; align-items: center; font-size: 12px; color: {{t.danger}}">Gửi không thành công ·<button type="button" style="border: 0; background: transparent; padding: 0; color: {{t.danger}}; font-size: 12px; font-weight: 600; text-decoration: underline">Gửi lại</button></div>
+</div>
+
+<div style="display: flex; align-items: center; gap: 8px; font-size: 12px; color: {{t.muted}}"><span style="display: flex; gap: 3px; padding: 8px 10px; border-radius: 14px; background: {{t.inBubble}}"><span style="width: 6px; height: 6px; border-radius: 50%; background: {{t.muted}}"></span><span style="width: 6px; height: 6px; border-radius: 50%; background: {{t.muted}}; opacity: 0.7"></span><span style="width: 6px; height: 6px; border-radius: 50%; background: {{t.muted}}; opacity: 0.4"></span></span>Hoàng Lan đang soạn tin</div>
+</div>
+
+<div style="padding: 0 16px 16px; display: flex; flex-direction: column; gap: 8px">
+<div style="display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 14px; background: {{t.hover}}; font-size: 13px">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color: {{t.accentInk}}"><path d="M9 14L4 9l5-5"></path><path d="M20 20v-7a4 4 0 0 0-4-4H4"></path></svg>
+<span style="flex-grow: 1">Đang trả lời <strong>Tuấn</strong>: Mình đẩy bản wireframe lên rồi nhé...</span>
+<button type="button" aria-label="Huỷ trả lời" style="width: 28px; height: 28px; border: 0; background: transparent; display: flex; align-items: center; justify-content: center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+</div>
+<div style="display: flex; align-items: center; gap: 6px; padding: 6px 6px 6px 8px; border-radius: 28px; background: {{t.glass2}}; backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid {{t.border}}; box-shadow: {{t.shadow}}">
+<button type="button" aria-label="Chèn emoji" style="width: 40px; height: 40px; border: 0; background: transparent; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: {{t.muted}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M8 14s1.5 2 4 2 4-2 4-2"></path><path d="M9 9.5h.01M15 9.5h.01"></path></svg></button>
+<button type="button" aria-label="Gửi ảnh hoặc video" style="width: 40px; height: 40px; border: 0; background: transparent; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: {{t.muted}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"></rect><circle cx="9" cy="10" r="2"></circle><path d="M21 16l-5-5-9 9"></path></svg></button>
+<button type="button" aria-label="Đính kèm file" style="width: 40px; height: 40px; border: 0; background: transparent; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: {{t.muted}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5l-8.5 8.5a5 5 0 0 1-7-7L14 4.5a3.5 3.5 0 0 1 5 5l-8.5 8.5a2 2 0 0 1-3-3L15 7.5"></path></svg></button>
+<label style="flex-grow: 1; display: flex"><textarea rows="1" placeholder="Nhập tin nhắn..." aria-label="Nội dung tin nhắn" style="flex-grow: 1; resize: none; border: 0; background: transparent; padding: 8px 6px; font-size: 14px; outline: none"></textarea></label>
+<button type="button" aria-label="Gửi" style="width: 44px; height: 44px; border: 0; border-radius: 50%; background: linear-gradient(135deg, #3460EE, #6A4CF0); color: #FFFFFF; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 18px rgba(52,96,238,0.35)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2L11 13"></path><path d="M22 2l-7 20-4-9-9-4z"></path></svg></button>
+</div>
+</div>
+</main>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"$preview":{"width":1280,"height":800}}'>
+class Component extends DCLogic {
+renderVals() {
+var LIGHT = { bg: '#E9EDF5', b1: 'rgba(92,132,255,0.55)', b2: 'rgba(170,120,255,0.45)', b3: 'rgba(64,210,190,0.40)', glass: 'rgba(255,255,255,0.55)', glass2: 'rgba(255,255,255,0.78)', border: 'rgba(255,255,255,0.75)', shadow: '0 10px 40px rgba(28,40,90,0.14), inset 0 1px 0 rgba(255,255,255,0.9)', text: '#10152A', muted: '#475069', accentInk: '#2446B8', active: 'rgba(52,96,238,0.14)', inBubble: 'rgba(255,255,255,0.85)', field: 'rgba(255,255,255,0.6)', hover: 'rgba(16,21,42,0.06)', line: 'rgba(16,21,42,0.08)', danger: '#C0271B', dangerSoft: 'rgba(192,39,27,0.10)' };
+var DARK = { bg: '#090C16', b1: 'rgba(60,90,255,0.45)', b2: 'rgba(140,70,230,0.40)', b3: 'rgba(20,160,160,0.35)', glass: 'rgba(20,25,42,0.55)', glass2: 'rgba(30,36,58,0.80)', border: 'rgba(255,255,255,0.10)', shadow: '0 10px 40px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.08)', text: '#EEF1FA', muted: '#A6ADC4', accentInk: '#A9BEFF', active: 'rgba(78,120,255,0.24)', inBubble: 'rgba(255,255,255,0.09)', field: 'rgba(255,255,255,0.07)', hover: 'rgba(255,255,255,0.07)', line: 'rgba(255,255,255,0.09)', danger: '#FF7A6E', dangerSoft: 'rgba(255,122,110,0.14)' };
+return { t: (this.props.theme ?? 'light') === 'dark' ? DARK : LIGHT };
+}
+}
+</script>
+</body>
+</html>

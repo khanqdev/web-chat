@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Đăng nhập</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:'Be Vietnam Pro',system-ui,sans-serif}
+a{color:#3460EE}a:hover{color:#2446B8}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer}
+</style>
+</helmet>
+<div style="width: 1280px; height: 800px; position: relative; overflow: hidden; background: {{t.bg}}; color: {{t.text}}; font-family: 'Be Vietnam Pro', system-ui, sans-serif; line-height: 1.5; display: flex; align-items: center; justify-content: center">
+<div aria-hidden="true" style="position: absolute; left: 260px; top: 60px; width: 520px; height: 520px; border-radius: 50%; background: {{t.b1}}; filter: blur(100px)"></div>
+<div aria-hidden="true" style="position: absolute; left: 620px; top: 300px; width: 480px; height: 480px; border-radius: 50%; background: {{t.b2}}; filter: blur(100px)"></div>
+<div aria-hidden="true" style="position: absolute; left: 420px; top: 460px; width: 340px; height: 340px; border-radius: 50%; background: {{t.b3}}; filter: blur(90px)"></div>
+
+<div role="group" aria-label="Ngôn ngữ" style="position: absolute; right: 24px; top: 24px; display: flex; gap: 4px; padding: 4px; border-radius: 14px; background: {{t.glass}}; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid {{t.border}}">
+<button type="button" aria-pressed="true" style="height: 32px; padding: 0 12px; border: 0; border-radius: 10px; background: {{t.glass2}}; font-size: 13px; font-weight: 600">VI</button>
+<button type="button" aria-pressed="false" style="height: 32px; padding: 0 12px; border: 0; border-radius: 10px; background: transparent; font-size: 13px; color: {{t.muted}}">EN</button>
+</div>
+
+<div style="position: relative; width: 420px; box-sizing: border-box; border-radius: 28px; background: {{t.glass}}; backdrop-filter: blur(32px) saturate(170%); -webkit-backdrop-filter: blur(32px) saturate(170%); border: 1px solid {{t.border}}; box-shadow: {{t.shadow}}; padding: 36px 40px; display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; align-items: center; gap: 10px">
+<div style="width: 42px; height: 42px; border-radius: 14px; background: linear-gradient(135deg, #3460EE, #6A4CF0); color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px">W</div>
+<span style="font-size: 16px; font-weight: 600">[TÊN SẢN PHẨM]</span>
+</div>
+<h1 style="margin: 8px 0 0; font-size: 26px; font-weight: 700; letter-spacing: -0.01em">Chào mừng trở lại</h1>
+
+<a href="Main.dc.html" style="height: 46px; border: 1px solid {{t.line}}; border-radius: 14px; background: {{t.field}}; color: {{t.text}}; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 14px; font-weight: 500"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 12h8"></path></svg>Tiếp tục với Google</a>
+
+<div style="display: flex; align-items: center; gap: 12px; font-size: 13px; color: {{t.muted}}"><div style="flex-grow: 1; height: 1px; background: {{t.line}}"></div>hoặc<div style="flex-grow: 1; height: 1px; background: {{t.line}}"></div></div>
+
+<label style="display: flex; flex-direction: column; gap: 6px; font-size: 13px; font-weight: 500">Email
+<input type="email" placeholder="ban@email.com" style="height: 46px; border: 1px solid {{t.line}}; border-radius: 14px; padding: 0 14px; font-size: 14px; font-weight: 400; background: {{t.field}}; color: {{t.text}}"></label>
+<label style="display: flex; flex-direction: column; gap: 6px; font-size: 13px; font-weight: 500">Mật khẩu
+<input type="password" placeholder="Tối thiểu 8 ký tự" style="height: 46px; border: 1px solid {{t.line}}; border-radius: 14px; padding: 0 14px; font-size: 14px; font-weight: 400; background: {{t.field}}; color: {{t.text}}"></label>
+<div style="display: flex; justify-content: flex-end; font-size: 13px"><a href="#quen-mat-khau" style="color: {{t.accentInk}}">Quên mật khẩu?</a></div>
+
+<div role="alert" style="padding: 10px 14px; border-radius: 14px; background: {{t.dangerSoft}}; color: {{t.danger}}; font-size: 13px">Sai mật khẩu quá 5 lần. Thử lại sau 14 phút.</div>
+
+<a href="Main.dc.html" style="height: 48px; border-radius: 14px; background: linear-gradient(135deg, #3460EE, #6A4CF0); color: #FFFFFF; text-decoration: none; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 600; box-shadow: 0 8px 24px rgba(52,96,238,0.40)">Đăng nhập</a>
+
+<div style="font-size: 14px; text-align: center; color: {{t.muted}}">Chưa có tài khoản? <a href="#dang-ky" style="font-weight: 600; color: {{t.accentInk}}">Đăng ký bằng email</a></div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"$preview":{"width":1280,"height":800}}'>
+class Component extends DCLogic {
+renderVals() {
+var LIGHT = { bg: '#E9EDF5', b1: 'rgba(92,132,255,0.55)', b2: 'rgba(170,120,255,0.45)', b3: 'rgba(64,210,190,0.40)', glass: 'rgba(255,255,255,0.55)', glass2: 'rgba(255,255,255,0.78)', border: 'rgba(255,255,255,0.75)', shadow: '0 10px 40px rgba(28,40,90,0.14), inset 0 1px 0 rgba(255,255,255,0.9)', text: '#10152A', muted: '#475069', accentInk: '#2446B8', active: 'rgba(52,96,238,0.14)', inBubble: 'rgba(255,255,255,0.85)', field: 'rgba(255,255,255,0.6)', hover: 'rgba(16,21,42,0.06)', line: 'rgba(16,21,42,0.08)', danger: '#C0271B', dangerSoft: 'rgba(192,39,27,0.10)' };
+var DARK = { bg: '#090C16', b1: 'rgba(60,90,255,0.45)', b2: 'rgba(140,70,230,0.40)', b3: 'rgba(20,160,160,0.35)', glass: 'rgba(20,25,42,0.55)', glass2: 'rgba(30,36,58,0.80)', border: 'rgba(255,255,255,0.10)', shadow: '0 10px 40px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.08)', text: '#EEF1FA', muted: '#A6ADC4', accentInk: '#A9BEFF', active: 'rgba(78,120,255,0.24)', inBubble: 'rgba(255,255,255,0.09)', field: 'rgba(255,255,255,0.07)', hover: 'rgba(255,255,255,0.07)', line: 'rgba(255,255,255,0.09)', danger: '#FF7A6E', dangerSoft: 'rgba(255,122,110,0.14)' };
+return { t: (this.props.theme ?? 'light') === 'dark' ? DARK : LIGHT };
+}
+}
+</script>
+</body>
+</html>
